@@ -101,3 +101,20 @@ paste `ls cs_cage_*rpm.txt`|cut -f 1-7,14,21,28|cat ~/yilin/cage/data_process/05
  sed '1d '  cs_cage_sample_rpm.bed  |awk 'BEGIN{OFS="\t"}{if($7>=0.5)$7="1";else $7=0;if($8>=0.5)$8="1";else $8=0;if($9>=0.5)$9="1";else $9=0;if($10>=0.5)$10="1";else $10=0;print $0}'|cat head.txt  - > cs_cage_sample_rpm01.bed
 
 
+###HMM weak gene-TSS annotation
+mkdir 00_data 01_state
+cs $dir/00_data
+ls *bed|awk 'BEGIN{OFS="\t"}{print "cs",$1,$1}'|sed 's/_rep1.cs.q20.rmdup.rmmult.bed//'|sed 's/_collapse.bed//'|sed s'/_RNAseq.bed/_RNAseq/'|sed 's/_/\t/'|cut -f 1,3,4 > ../matrix.txt
+
+cd $dir/01_state
+ChromHMM_dir=~/miniconda2/pkgs/chromhmm-1.23-hdfd78af_0/share/chromhmm-1.23-0
+genome_size=161010_Chinese_Spring_v1.0_pseudomolecules_parts.fasta.size
+data=$dir/00_data
+
+java -mx5000M -jar $ChromHMM_dir/ChromHMM.jar BinarizeBed -b 500 $genome_size $data ./matrix.txt wheat_500bin/
+
+for n  in `seq 8 20`
+do
+java -jar $ChromHMM_dir/ChromHMM.jar LearnModel -b 500  wheat_500bin 500bin/wheat_${n}class_500bin $n wheat
+done
+
