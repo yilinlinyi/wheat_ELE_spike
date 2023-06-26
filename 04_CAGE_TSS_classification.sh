@@ -44,31 +44,22 @@ cat  transcripts.fasta.transdecoder_compelete.pep|paste - - |awk '{print $1"\t"l
 
 ###HC_5UTR
 bedtools intersect -a cs_cage_4tissue_merge.dominant.bed  -b HC_5UTR_merge_pep_length.bed  -wao -s -sorted |awk '$7!="."'|sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""5_UTR"}' > 1.list
-
 ###LC_5UTR
 cut -f 1 1.list  |grep -F -w -v -f -   cs_cage_4tissue_merge.dominant.bed |bedtools intersect -a - -b LC_5UTR_merge_pep_length.bed  -wao -s -sorted |awk '$7!="."'|sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""5_UTR"}' > 2.list
 
-
 ###assembly_with_gene
  cat 1.list 2.list|cut -f 1 |grep -F -w -v -f -   cs_cage_4tissue_merge.dominant.bed |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene.bed -wao -s -sorted |awk '$7!="."' |grep -v NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""5_UTR_lnRNA"}' > 3.list
-
 ###assembly_without_gene
 cat 1.list 2.list 3.list|cut -f 1 |grep -F -w -v -f -   cs_cage_4tissue_merge.dominant.bed |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene.bed -wao -s -sorted |awk '$7!="."' |grep  NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""5_UTR_lnRNA"}' > 4.list
-
-
 ##tssup500
 cat 1.list 2.list 3.list 4.list  |cut -f 1 |grep -F -w -v  -f  - cs_cage_4tissue_merge.dominant.bed  |bedtools intersect -a - -b cs_HC_tssup500bp.pep.bed  -wao -sorted -s |awk '$7!="."'|sort -k4,4 -k11,11nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""tssup500"}' >  5.list
-
 cat 1.list 2.list 3.list 4.list  5.list|cut -f 1 |grep -F -w -v  -f  - cs_cage_4tissue_merge.dominant.bed  |bedtools intersect -a - -b cs_LC_tssup500bp.pep.bed  -wao -sorted -s |awk '$7!="."'|sort -k4,4 -k11,11nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""tssup500"}' >  6.list
-
 cat 1.list 2.list 3.list 4.list  5.list 6.list |cut -f 1 |grep -F -w -v  -f  - cs_cage_4tissue_merge.dominant.bed  |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene_tssup500.bed  -wao -sorted -s |awk '$7!="."'|grep -v NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""tssup500_lnRNA"}' > 7.list
-
 cat 1.list 2.list 3.list 4.list  5.list 6.list 7.list  |cut -f 1 |grep -F -w -v  -f  - cs_cage_4tissue_merge.dominant.bed  |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene_tssup500.bed  -wao -sorted -s |awk '$7!="."'|grep  NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""tssup500_lnRNA"}' > 8.list
 ###rescue
 cat 1.list 2.list 3.list  4.list 5.list 6.list 7.list 8.list  | cut -f 1 |grep --color=auto -F -w -v -f -  cs_cage_4tissue_merge_all.bed |sort -k1,1 -k2,2n > cs_cage_torescue.bed
 bedtools intersect -a cs_cage_torescue.bed -b HC_5UTR_merge_pep_length.bed  -wao -s -sorted |awk '$7!="."'|sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""5_UTR"}' > 1.list.1
 cut -f 1 1.list.1 |grep -F -w -v -f -   cs_cage_torescue.bed |bedtools intersect -a - -b LC_5UTR_merge_pep_length.bed  -wao -s -sorted |awk '$7!="."'|sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10|awk '{print $1"\t"$2"\t""5_UTR"}' > 2.list.1
-
 cat 1.list.1 2.list.1 |cut -f 1|grep -F -w -v -f -   cs_cage_torescue.bed |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene.bed -wao -s -sorted |awk '$7!="."' |grep -v NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""5_UTR_lnRNA"}' > 3.list.1
 
 cat 1.list.1 2.list.1 3.list.1 |cut -f 1|grep -F -w -v -f -   cs_cage_torescue.bed |bedtools intersect -a - -b complete_5UTR_merge_pep_length.gene.bed -wao -s -sorted |awk '$7!="."' |grep  NA |sort -k4,4 -k13,13nr |sort -k4,4 -u |cut -f 4,10,14|awk '{print $1"\t"$2":"$3"\t""5_UTR_lnRNA"}' > 4.list.1
@@ -90,17 +81,14 @@ grep -v MS cs_cage_coding_classification.txt  >  cs_cage_coding_classification.c
 grep  MS cs_cage_coding_classification.txt|sed 's/:/\t/'|cut -f 1,2,4 >  cs_cage_coding_classification.cds.2.txt
 cat cs_cage_coding_classification.cds.[1-2].txt > cs_cage_coding_classification.cds.txt
 
-
-
 for i in `seq 1 8 `; do n=`cat $i.list $i.list.1 |wc -l` ;echo -e  $i"\t"$n >> stat.txt ;  done
 cut -f 1  cs_cage_coding_classification.txt|grep -F -w -v -f  -  cs_cage_4tissue_merge_all.bed > cs_cage_nocoding.bed
 cut  -f 1 cs_cage_coding_classification.txt|grep -F -w -f  -  cs_cage_4tissue_merge_all.bed >  cs_cage_coding.bed
 Rscript f_bar.r
  bedtools slop -r 100 -l 100 -i cs_cage_4tissue_merge.dominant.bed -g ~/yilin/genome/iwgsc_cs/161010_Chinese_Spring_v1.0_pseudomolecules_parts.fasta.fai > cs_cage_4tissue_merge.dominant.slop200bp.bed
 
-
 ###rpm
-###simple rpm
+###sample rpm
 for i in embryo seedling root spikelet_I
 do
 n=`awk '{sum+=$4}END{print sum}' ~/yilin/cage/data_process/04_rep_merge/cs_cage_${i}_merge_unique_best.site_frq.bed`
@@ -108,10 +96,6 @@ bedtools intersect -a cs_cage_4tissue_merge_all.bed  -b  ~/yilin/cage/data_proce
 done
 paste `ls cs_cage_*rpm.txt`|cut -f 1-7,14,21,28|cat ~/yilin/cage/data_process/05_cager/permissive/anno/head.txt  -  > cs_cage_sample_rpm.bed
 
-mv [1-8]*list* processed_file/
-mv cs_cage_torescue.bed  processed_file/
-rm -f cs_cage_coding_classification.gene.[1-3].txt
-rm -f cs_cage_coding_classification.cds.[1-2].txt
 
 ##rpm 01
  sed '1d '  cs_cage_sample_rpm.bed  |awk 'BEGIN{OFS="\t"}{if($7>=0.5)$7="1";else $7=0;if($8>=0.5)$8="1";else $8=0;if($9>=0.5)$9="1";else $9=0;if($10>=0.5)$10="1";else $10=0;print $0}'|cat head.txt  - > cs_cage_sample_rpm01.bed
